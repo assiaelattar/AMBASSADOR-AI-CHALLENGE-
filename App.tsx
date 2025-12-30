@@ -6,7 +6,7 @@ import { Timeline } from './components/Timeline';
 import { Rules } from './components/Rules';
 import { RegistrationForm } from './components/RegistrationForm';
 import { AdminPanel } from './components/AdminPanel';
-import { Terminal, Menu, X, ShieldCheck } from 'lucide-react';
+import { Terminal, Menu, X, ShieldCheck, Lock } from 'lucide-react';
 
 const Navbar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -28,7 +28,7 @@ const Navbar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 px-4 md:px-8 py-4 ${scrolled || mobileMenuOpen ? 'bg-black/90 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <a href={isAdmin ? "#admin" : "#hero"} className="flex items-center gap-2 group">
+          <a href={isAdmin ? "#hero" : "#hero"} className="flex items-center gap-2 group">
             <div className={`w-8 h-8 rounded flex items-center justify-center text-black font-black font-orbitron text-xs shadow-[0_0_10px_rgba(204,255,0,0.5)] group-hover:scale-110 transition-transform ${isAdmin ? 'bg-cyan-500 shadow-cyan-500/50' : 'bg-lime-500 shadow-lime-500/50'}`}>A</div>
             <span className="font-orbitron font-black text-white text-sm tracking-tighter uppercase md:block hidden">
               Ambassadeur {isAdmin ? 'Admin' : 'AI'}
@@ -53,8 +53,8 @@ const Navbar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             </a>
           )}
           {isAdmin && (
-            <a href="#" className="font-gaming text-[7px] text-cyan-400 uppercase tracking-widest px-4 py-2 border border-cyan-400/30 rounded flex items-center gap-2">
-              <ShieldCheck size={12} /> Root Access
+            <a href="#hero" className="font-gaming text-[7px] text-cyan-400 uppercase tracking-widest px-4 py-2 border border-cyan-400/30 rounded flex items-center gap-2 hover:bg-cyan-400 hover:text-black transition-all">
+              <ShieldCheck size={12} /> Exit Terminal
             </a>
           )}
         </div>
@@ -93,7 +93,7 @@ const Navbar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             </a>
           ) : (
             <a 
-              href="#" 
+              href="#hero" 
               onClick={() => setMobileMenuOpen(false)}
               className="w-full py-4 bg-slate-900 text-cyan-500 font-orbitron font-black text-center uppercase tracking-widest rounded-xl border border-cyan-500/20"
             >
@@ -116,6 +116,7 @@ const Footer: React.FC = () => (
       <p className="text-slate-500 text-sm mb-10 max-w-sm mx-auto font-medium leading-relaxed">
         Building the infrastructure of tomorrow, one line of code at a time.
       </p>
+      
       <div className="flex flex-wrap justify-center gap-6 md:gap-8 mb-12">
         <a href="#" className="text-slate-500 hover:text-lime-500 transition-all font-orbitron font-black text-[10px] uppercase tracking-widest">TWITTER</a>
         <a href="#" className="text-slate-500 hover:text-lime-500 transition-all font-orbitron font-black text-[10px] uppercase tracking-widest">INSTAGRAM</a>
@@ -124,6 +125,13 @@ const Footer: React.FC = () => (
       
       <div className="w-20 h-px bg-white/10 mx-auto mb-10"></div>
       
+      {/* Admin Panel Link */}
+      <div className="mb-10">
+        <a href="#admin" className="inline-flex items-center gap-2 text-slate-800 hover:text-cyan-500 transition-all font-gaming text-[8px] uppercase tracking-widest group">
+          <Lock size={10} className="group-hover:animate-pulse" /> [ ROOT_ACCESS_TERMINAL ]
+        </a>
+      </div>
+
       <p className="text-[8px] md:text-[9px] text-slate-700 font-gaming tracking-[0.4em] uppercase leading-loose">
         &copy; 2026 // AMBASSADEUR AI CHALLENGE // ALL_SYSTEMS_GO
       </p>
@@ -138,6 +146,7 @@ function App() {
     const handleHashChange = () => {
       if (window.location.hash === '#admin') {
         setView('admin');
+        window.scrollTo(0, 0);
       } else {
         setView('landing');
       }
