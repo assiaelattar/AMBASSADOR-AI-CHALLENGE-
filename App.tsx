@@ -5,9 +5,10 @@ import { Mission } from './components/Mission';
 import { Timeline } from './components/Timeline';
 import { Rules } from './components/Rules';
 import { RegistrationForm } from './components/RegistrationForm';
-import { Terminal, Menu, X } from 'lucide-react';
+import { AdminPanel } from './components/AdminPanel';
+import { Terminal, Menu, X, ShieldCheck } from 'lucide-react';
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -17,7 +18,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks = isAdmin ? [] : [
     { name: 'Mission', href: '#mission' },
     { name: 'Timeline', href: '#timeline' },
     { name: 'Rules', href: '#rules' },
@@ -27,9 +28,11 @@ const Navbar: React.FC = () => {
     <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 px-4 md:px-8 py-4 ${scrolled || mobileMenuOpen ? 'bg-black/90 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <a href="#hero" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-lime-500 rounded flex items-center justify-center text-black font-black font-orbitron text-xs shadow-[0_0_10px_rgba(204,255,0,0.5)] group-hover:scale-110 transition-transform">A</div>
-            <span className="font-orbitron font-black text-white text-sm tracking-tighter uppercase md:block hidden">Ambassadeur AI</span>
+          <a href={isAdmin ? "#admin" : "#hero"} className="flex items-center gap-2 group">
+            <div className={`w-8 h-8 rounded flex items-center justify-center text-black font-black font-orbitron text-xs shadow-[0_0_10px_rgba(204,255,0,0.5)] group-hover:scale-110 transition-transform ${isAdmin ? 'bg-cyan-500 shadow-cyan-500/50' : 'bg-lime-500 shadow-lime-500/50'}`}>A</div>
+            <span className="font-orbitron font-black text-white text-sm tracking-tighter uppercase md:block hidden">
+              Ambassadeur {isAdmin ? 'Admin' : 'AI'}
+            </span>
           </a>
         </div>
         
@@ -44,9 +47,16 @@ const Navbar: React.FC = () => {
               {link.name}
             </a>
           ))}
-          <a href="#register" className="px-5 py-2 bg-lime-500 text-black font-orbitron font-black text-[10px] uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(204,255,0,0.3)] hover:scale-105 active:scale-95 transition-all">
-            Join Now
-          </a>
+          {!isAdmin && (
+            <a href="#register" className="px-5 py-2 bg-lime-500 text-black font-orbitron font-black text-[10px] uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(204,255,0,0.3)] hover:scale-105 active:scale-95 transition-all">
+              Join Now
+            </a>
+          )}
+          {isAdmin && (
+            <a href="#" className="font-gaming text-[7px] text-cyan-400 uppercase tracking-widest px-4 py-2 border border-cyan-400/30 rounded flex items-center gap-2">
+              <ShieldCheck size={12} /> Root Access
+            </a>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -73,13 +83,23 @@ const Navbar: React.FC = () => {
               {link.name}
             </a>
           ))}
-          <a 
-            href="#register" 
-            onClick={() => setMobileMenuOpen(false)}
-            className="w-full py-4 bg-lime-500 text-black font-orbitron font-black text-center uppercase tracking-widest rounded-xl"
-          >
-            Register Now
-          </a>
+          {!isAdmin ? (
+            <a 
+              href="#register" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-4 bg-lime-500 text-black font-orbitron font-black text-center uppercase tracking-widest rounded-xl"
+            >
+              Register Now
+            </a>
+          ) : (
+            <a 
+              href="#" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full py-4 bg-slate-900 text-cyan-500 font-orbitron font-black text-center uppercase tracking-widest rounded-xl border border-cyan-500/20"
+            >
+              Exit Terminal
+            </a>
+          )}
         </div>
       )}
     </nav>
@@ -112,26 +132,52 @@ const Footer: React.FC = () => (
 );
 
 function App() {
+  const [view, setView] = useState<'landing' | 'admin'>('landing');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#admin') {
+        setView('admin');
+      } else {
+        setView('landing');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Check on initial load
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-lime-500/30 selection:text-lime-200">
-      <Navbar />
-      <Hero />
-      <Mission />
-      <Timeline />
-      <Rules />
-      <RegistrationForm />
+      <Navbar isAdmin={view === 'admin'} />
+      
+      {view === 'landing' ? (
+        <>
+          <Hero />
+          <Mission />
+          <Timeline />
+          <Rules />
+          <RegistrationForm />
+        </>
+      ) : (
+        <AdminPanel />
+      )}
+      
       <Footer />
       
       {/* Floating CTA for Mobile - Enhanced with Neon */}
-      <div className="fixed bottom-6 right-6 z-50 md:hidden animate-bounce">
-        <a 
-          href="#register" 
-          className="w-14 h-14 bg-lime-500 text-black rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(204,255,0,0.6)] hover:scale-110 active:scale-90 transition-all font-black font-orbitron text-xs flex-col leading-none"
-        >
-          <Terminal size={20} />
-          <span className="mt-1 text-[8px] font-gaming">JOIN</span>
-        </a>
-      </div>
+      {view === 'landing' && (
+        <div className="fixed bottom-6 right-6 z-50 md:hidden animate-bounce">
+          <a 
+            href="#register" 
+            className="w-14 h-14 bg-lime-500 text-black rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(204,255,0,0.6)] hover:scale-110 active:scale-90 transition-all font-black font-orbitron text-xs flex-col leading-none"
+          >
+            <Terminal size={20} />
+            <span className="mt-1 text-[8px] font-gaming">JOIN</span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }
