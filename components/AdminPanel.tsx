@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
-import { Terminal, Users, Database, ShieldCheck, ChevronRight, Search, FileText, ExternalLink } from 'lucide-react';
+import { Terminal, Users, Database, ShieldCheck, ChevronRight, Search, FileText, ExternalLink, ArrowLeft } from 'lucide-react';
 
 interface Submission {
   id: string;
@@ -46,6 +46,13 @@ export const AdminPanel: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 pt-24 px-4 pb-12">
       <div className="max-w-7xl mx-auto space-y-8">
+        {/* Top Actions */}
+        <div className="flex justify-start">
+           <a href="#hero" className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors font-gaming text-[8px] uppercase tracking-widest py-2 px-4 border border-white/5 rounded-lg bg-white/5">
+              <ArrowLeft size={12} /> Return to Home
+           </a>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
